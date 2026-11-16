@@ -1,0 +1,73 @@
+# Banco de Resíduos — ambiente completo com um comando:
+#
+#   docker compose up --build
+#
+# Depois acesse http://localhost:3000
+# Para apagar tudo (inclusive os dados): docker compose down -v
+
+name: banco-de-residuos
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bdr
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bdr}
+      POSTGRES_DB: banco_residuos
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    ports:
+      # Acessível só nesta máquina, para Prisma Studio, DBeaver e os testes.
+      # Porta 5434 no host para não disputar com um PostgreSQL já instalado.
+      - "127.0.0.1:${DB_PORT:-5434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bdr -d banco_residuos"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./apps/api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://bdr:${POSTGRES_PASSWORD:-bdr}@db:5432/banco_residuos?schema=public
+      # Vazio = o contêiner gera um segredo aleatório e o guarda no volume `segredos_api`.
+      JWT_SECRET: ${JWT_SECRET:-}
+      COMISSAO_BPS: ${COMISSAO_BPS:-500}
+      # Mude para "true" quando o site for servido por HTTPS.
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      SEED: ${SEED:-true}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - fotos_anuncios:/app/uploads
+      - segredos_api:/app/segredos
+    # A API não é publicada no host: o navegador fala só com o frontend, que repassa /api.
+    expose:
+      - "3333"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3333/api/saude').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        API_URL: http://api:3333
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+volumes:
+  dados_postgres:
+  fotos_anuncios:
+  segredos_api:

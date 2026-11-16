@@ -1,0 +1,16 @@
+{
+  "name": "banco-de-residuos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Marketplace de resíduos agrícolas do Vale do São Francisco",
+  "scripts": {
+    "instalar": "npm --prefix apps/api install && npm --prefix apps/web install",
+    "db": "docker compose up -d db",
+    "dev:api": "npm --prefix apps/api run dev",
+    "dev:web": "npm --prefix apps/web run dev",
+    "seed": "npm --prefix apps/api run db:seed",
+    "studio": "npm --prefix apps/api run db:studio",
+    "test": "npm --prefix apps/api test && npm --prefix apps/web test",
+    "verificar": "npm --prefix apps/api run typecheck && npm --prefix apps/web run typecheck && npm --prefix apps/web run lint && npm test"
+  }
+}

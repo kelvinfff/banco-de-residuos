@@ -1,0 +1,10 @@
+node_modules
+.env
+.env.*
+!.env.example
+.next
+*.log
+.DS_Store
+
+# Metadados que o Windows anexa a arquivos baixados (WSL)
+*:Zone.Identifier

@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/*
+ * Identidade visual do Banco de Resíduos.
+ * Verde-folha da fruticultura irrigada, âmbar da manga e areia do sertão.
+ * Use sempre estes tokens (bg-brand-700, text-tinta-suave...) em vez de cores soltas.
+ */
+@theme {
+  --font-sans: var(--font-corpo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-titulo), var(--font-corpo), ui-sans-serif, system-ui, sans-serif;
+
+  /* Verde-folha: cor da marca e das ações principais */
+  --color-brand-50: #eff6f0;
+  --color-brand-100: #dcebdd;
+  --color-brand-200: #b7d6ba;
+  --color-brand-300: #8bbb91;
+  --color-brand-500: #3f8a54;
+  --color-brand-600: #2f7243;
+  --color-brand-700: #245b35;
+  --color-brand-800: #1b452a;
+  --color-brand-900: #122f1d;
+
+  /* Âmbar da manga: destaques e avaliações */
+  --color-manga-50: #fef8e8;
+  --color-manga-100: #fcedc6;
+  --color-manga-300: #f6cf6d;
+  --color-manga-400: #f0b530;
+  --color-manga-500: #e09b12;
+  --color-manga-800: #7a4d06;
+
+  /* Terra: alertas suaves e detalhes */
+  --color-terra-50: #fbf0ea;
+  --color-terra-100: #f6dfd3;
+  --color-terra-600: #b0502a;
+  --color-terra-800: #7a3519;
+
+  /* Areia: fundos e bordas */
+  --color-areia-50: #faf7f1;
+  --color-areia-100: #f3eee2;
+  --color-areia-200: #e6dfce;
+  --color-areia-300: #d3c9b2;
+  --color-areia-400: #a89e87;
+
+  /* Tinta: textos */
+  --color-tinta: #1a2921;
+  --color-tinta-suave: #51605a;
+
+  /* Situações */
+  --color-perigo-50: #fdecea;
+  --color-perigo-600: #b3261e;
+  --color-perigo-700: #8c1d18;
+  --color-info-50: #e8f1fb;
+  --color-info-700: #1f5a96;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-areia-50);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  /* Foco visível e consistente para navegação por teclado. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Marcador do mapa (Leaflet divIcon). */
+.pino-mapa {
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--color-brand-700);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+  transform: rotate(-45deg);
+}
+.pino-mapa--destaque {
+  background: var(--color-manga-500);
+}
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--color-areia-100);
+}

@@ -1,0 +1,289 @@
+// Modelo de dados do Banco de Resíduos.
+// Convenção: nomes em português; tabelas e colunas em snake_case no PostgreSQL.
+// Valores monetários são guardados em centavos (inteiros) e quantidades em NUMERIC.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TipoOrganizacao {
+  PRODUTOR
+  AGROINDUSTRIA
+  COOPERATIVA
+  EMPRESA
+  OUTRO
+
+  @@map("tipo_organizacao")
+}
+
+enum Papel {
+  USUARIO
+  ADMIN
+
+  @@map("papel")
+}
+
+enum Unidade {
+  KG
+  TONELADA
+  LITRO
+  M3
+  UNIDADE
+
+  @@map("unidade")
+}
+
+enum Frequencia {
+  UNICA
+  SEMANAL
+  QUINZENAL
+  MENSAL
+  SAFRA
+
+  @@map("frequencia")
+}
+
+enum StatusAnuncio {
+  ATIVO
+  PAUSADO
+  ESGOTADO
+  ENCERRADO
+  SUSPENSO
+
+  @@map("status_anuncio")
+}
+
+enum StatusNegociacao {
+  ABERTA
+  ACEITA
+  RECUSADA
+  CANCELADA
+
+  @@map("status_negociacao")
+}
+
+enum StatusTransacao {
+  AGUARDANDO_PAGAMENTO
+  PAGA
+  CONCLUIDA
+  CANCELADA
+
+  @@map("status_transacao")
+}
+
+/// Municípios atendidos (início pelo Vale do São Francisco).
+model Municipio {
+  id        Int    @id @default(autoincrement())
+  nome      String
+  uf        String @db.Char(2)
+  latitude  Float
+  longitude Float
+
+  usuarios Usuario[]
+  anuncios Anuncio[]
+
+  @@unique([nome, uf])
+  @@map("municipios")
+}
+
+/// Tipo de resíduo: casca, bagaço, semente, resto de poda...
+model Categoria {
+  id        Int     @id @default(autoincrement())
+  nome      String  @unique
+  slug      String  @unique
+  descricao String?
+
+  anuncios Anuncio[]
+
+  @@map("categorias")
+}
+
+/// Cultura agrícola de origem do resíduo: uva, manga, goiaba...
+model Cultura {
+  id   Int    @id @default(autoincrement())
+  nome String @unique
+  slug String @unique
+
+  anuncios Anuncio[]
+
+  @@map("culturas")
+}
+
+/// Conta única: todo usuário pode anunciar e comprar.
+model Usuario {
+  id              Int             @id @default(autoincrement())
+  nome            String
+  email           String          @unique
+  senhaHash       String          @map("senha_hash")
+  telefone        String?
+  organizacao     String?
+  tipoOrganizacao TipoOrganizacao @default(PRODUTOR) @map("tipo_organizacao")
+  papel           Papel           @default(USUARIO)
+  bio             String?
+  municipioId     Int             @map("municipio_id")
+  latitude        Float?
+  longitude       Float?
+  ativo           Boolean         @default(true)
+  /// Reputação desnormalizada, recalculada a cada nova avaliação.
+  notaMedia       Float?          @map("nota_media")
+  totalAvaliacoes Int             @default(0) @map("total_avaliacoes")
+  criadoEm        DateTime        @default(now()) @map("criado_em")
+  atualizadoEm    DateTime        @updatedAt @map("atualizado_em")
+
+  municipio            Municipio    @relation(fields: [municipioId], references: [id])
+  anuncios             Anuncio[]
+  negociacoes          Negociacao[] @relation("NegociacoesComoComprador")
+  ofertas              Oferta[]
+  vendas               Transacao[]  @relation("TransacoesComoVendedor")
+  compras              Transacao[]  @relation("TransacoesComoComprador")
+  avaliacoesFeitas     Avaliacao[]  @relation("AvaliacoesFeitas")
+  avaliacoesRecebidas  Avaliacao[]  @relation("AvaliacoesRecebidas")
+
+  @@index([municipioId])
+  @@map("usuarios")
+}
+
+/// Oferta de resíduo publicada por um usuário.
+model Anuncio {
+  id                    Int           @id @default(autoincrement())
+  vendedorId            Int           @map("vendedor_id")
+  titulo                String
+  descricao             String
+  categoriaId           Int           @map("categoria_id")
+  culturaId             Int           @map("cultura_id")
+  quantidadeDisponivel  Decimal       @map("quantidade_disponivel") @db.Decimal(12, 3)
+  unidade               Unidade       @default(KG)
+  /// Preço desejado por unidade, em centavos. Zero significa doação.
+  precoUnitarioCentavos Int           @map("preco_unitario_centavos")
+  frequencia            Frequencia    @default(UNICA)
+  condicoesRetirada     String?       @map("condicoes_retirada")
+  municipioId           Int           @map("municipio_id")
+  latitude              Float
+  longitude             Float
+  status                StatusAnuncio @default(ATIVO)
+  criadoEm              DateTime      @default(now()) @map("criado_em")
+  atualizadoEm          DateTime      @updatedAt @map("atualizado_em")
+
+  vendedor    Usuario       @relation(fields: [vendedorId], references: [id])
+  categoria   Categoria     @relation(fields: [categoriaId], references: [id])
+  cultura     Cultura       @relation(fields: [culturaId], references: [id])
+  municipio   Municipio     @relation(fields: [municipioId], references: [id])
+  fotos       FotoAnuncio[]
+  negociacoes Negociacao[]
+  transacoes  Transacao[]
+
+  @@index([status, criadoEm(sort: Desc)])
+  @@index([categoriaId])
+  @@index([culturaId])
+  @@index([municipioId])
+  @@index([vendedorId])
+  @@map("anuncios")
+}
+
+model FotoAnuncio {
+  id        Int      @id @default(autoincrement())
+  anuncioId Int      @map("anuncio_id")
+  /// Caminho público da imagem, ex.: /uploads/abc123.jpg
+  url       String
+  ordem     Int      @default(0)
+  criadoEm  DateTime @default(now()) @map("criado_em")
+
+  anuncio Anuncio @relation(fields: [anuncioId], references: [id], onDelete: Cascade)
+
+  @@index([anuncioId])
+  @@map("fotos_anuncio")
+}
+
+/// Conversa de propostas entre um comprador e o vendedor de um anúncio.
+model Negociacao {
+  id           Int              @id @default(autoincrement())
+  anuncioId    Int              @map("anuncio_id")
+  compradorId  Int              @map("comprador_id")
+  status       StatusNegociacao @default(ABERTA)
+  criadoEm     DateTime         @default(now()) @map("criado_em")
+  atualizadoEm DateTime         @updatedAt @map("atualizado_em")
+
+  anuncio   Anuncio    @relation(fields: [anuncioId], references: [id])
+  comprador Usuario    @relation("NegociacoesComoComprador", fields: [compradorId], references: [id])
+  ofertas   Oferta[]
+  transacao Transacao?
+
+  @@index([anuncioId])
+  @@index([compradorId])
+  @@map("negociacoes")
+}
+
+/// Cada rodada da negociação: proposta inicial ou contraproposta.
+model Oferta {
+  id                    Int      @id @default(autoincrement())
+  negociacaoId          Int      @map("negociacao_id")
+  autorId               Int      @map("autor_id")
+  quantidade            Decimal  @db.Decimal(12, 3)
+  precoUnitarioCentavos Int      @map("preco_unitario_centavos")
+  mensagem              String?
+  criadoEm              DateTime @default(now()) @map("criado_em")
+
+  negociacao Negociacao @relation(fields: [negociacaoId], references: [id], onDelete: Cascade)
+  autor      Usuario    @relation(fields: [autorId], references: [id])
+
+  @@index([negociacaoId])
+  @@map("ofertas")
+}
+
+/// Negócio fechado. Guarda um retrato dos valores no momento do aceite.
+model Transacao {
+  id                    Int             @id @default(autoincrement())
+  negociacaoId          Int             @unique @map("negociacao_id")
+  anuncioId             Int             @map("anuncio_id")
+  vendedorId            Int             @map("vendedor_id")
+  compradorId           Int             @map("comprador_id")
+  quantidade            Decimal         @db.Decimal(12, 3)
+  unidade               Unidade
+  precoUnitarioCentavos Int             @map("preco_unitario_centavos")
+  valorTotalCentavos    Int             @map("valor_total_centavos")
+  /// Taxa da plataforma em pontos-base (500 = 5%).
+  taxaComissaoBps       Int             @map("taxa_comissao_bps")
+  comissaoCentavos      Int             @map("comissao_centavos")
+  valorLiquidoCentavos  Int             @map("valor_liquido_centavos")
+  status                StatusTransacao @default(AGUARDANDO_PAGAMENTO)
+  pagoEm                DateTime?       @map("pago_em")
+  concluidaEm           DateTime?       @map("concluida_em")
+  canceladaEm           DateTime?       @map("cancelada_em")
+  criadoEm              DateTime        @default(now()) @map("criado_em")
+  atualizadoEm          DateTime        @updatedAt @map("atualizado_em")
+
+  negociacao Negociacao  @relation(fields: [negociacaoId], references: [id])
+  anuncio    Anuncio     @relation(fields: [anuncioId], references: [id])
+  vendedor   Usuario     @relation("TransacoesComoVendedor", fields: [vendedorId], references: [id])
+  comprador  Usuario     @relation("TransacoesComoComprador", fields: [compradorId], references: [id])
+  avaliacoes Avaliacao[]
+
+  @@index([vendedorId])
+  @@index([compradorId])
+  @@index([status])
+  @@map("transacoes")
+}
+
+/// Avaliação mútua após a conclusão da transação (uma por participante).
+model Avaliacao {
+  id          Int      @id @default(autoincrement())
+  transacaoId Int      @map("transacao_id")
+  autorId     Int      @map("autor_id")
+  avaliadoId  Int      @map("avaliado_id")
+  nota        Int      @db.SmallInt
+  comentario  String?
+  criadoEm    DateTime @default(now()) @map("criado_em")
+
+  transacao Transacao @relation(fields: [transacaoId], references: [id])
+  autor     Usuario   @relation("AvaliacoesFeitas", fields: [autorId], references: [id])
+  avaliado  Usuario   @relation("AvaliacoesRecebidas", fields: [avaliadoId], references: [id])
+
+  @@unique([transacaoId, autorId])
+  @@index([avaliadoId])
+  @@map("avaliacoes")
+}
