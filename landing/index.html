@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banco de Resíduos — resíduo agrícola com novo destino</title>
+  <meta name="description" content="Marketplace que conecta quem tem resíduos e subprodutos agrícolas do Vale do São Francisco a quem pode dar a eles um novo uso.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%232f6b3a'/><path d='M10 20c0-6 5-10 12-10-1 7-5 12-12 10z' fill='%23f4d35e'/></svg>">
+  <style>
+    :root {
+      --verde: #2f6b3a;
+      --verde-escuro: #1f4a28;
+      --manga: #f4d35e;
+      --terra: #8a5a2b;
+      --fundo: #fbf8f1;
+      --texto: #1d241e;
+      --suave: #5b665c;
+      --borda: #e3dccb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--texto); background: var(--fundo); line-height: 1.55; }
+    a { color: var(--verde); }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    header { padding: 18px 0; }
+    .marca { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--verde-escuro); text-decoration: none; }
+    .marca span { width: 28px; height: 28px; border-radius: 50%; background: var(--verde); display: inline-grid; place-items: center; color: var(--manga); font-size: .9rem; }
+    .hero { padding: 48px 0 64px; display: grid; gap: 40px; grid-template-columns: 1.1fr .9fr; align-items: center; }
+    .hero h1 { font-size: clamp(2rem, 4.5vw, 3.1rem); line-height: 1.1; margin: 0 0 16px; color: var(--verde-escuro); }
+    .hero p { font-size: 1.12rem; color: var(--suave); margin: 0 0 24px; }
+    .selo { display: inline-block; background: #fff3c4; color: var(--terra); font-weight: 600; font-size: .85rem; padding: 4px 10px; border-radius: 999px; margin-bottom: 14px; }
+    .botoes { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-block; padding: 13px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 2px solid var(--verde); }
+    .btn-primario { background: var(--verde); color: #fff; }
+    .btn-primario:hover { background: var(--verde-escuro); }
+    .btn-secundario { color: var(--verde); background: transparent; }
+    .ilustracao { background: var(--verde); border-radius: 24px; padding: 28px; color: #fff; }
+    .ilustracao ol { margin: 0; padding-left: 20px; }
+    .ilustracao li { margin: 10px 0; }
+    .ilustracao strong { color: var(--manga); }
+    section { padding: 56px 0; }
+    section h2 { font-size: 1.8rem; margin: 0 0 8px; color: var(--verde-escuro); }
+    .sub { color: var(--suave); margin: 0 0 28px; }
+    .cards { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+    .card { background: #fff; border: 1px solid var(--borda); border-radius: 16px; padding: 22px; }
+    .card h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .card p { margin: 0; color: var(--suave); }
+    .faixa { background: #f1ead8; }
+    .lista-residuos { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; margin: 0; }
+    .lista-residuos li { background: #fff; border: 1px solid var(--borda); padding: 8px 14px; border-radius: 999px; }
+    form { background: #fff; border: 1px solid var(--borda); border-radius: 18px; padding: 26px; display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+    label { display: grid; gap: 6px; font-weight: 600; font-size: .95rem; }
+    input, select { font: inherit; padding: 11px 12px; border: 1px solid #cfc6b1; border-radius: 10px; background: #fff; width: 100%; }
+    input:focus, select:focus { outline: 3px solid #f4d35e88; border-color: var(--verde); }
+    .inteiro { grid-column: 1 / -1; }
+    .aceite { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .88rem; color: var(--suave); }
+    .aceite input { width: auto; margin-top: 3px; }
+    .mensagem { grid-column: 1 / -1; padding: 12px 14px; border-radius: 10px; display: none; }
+    .mensagem.ok { display: block; background: #e3f2e5; color: var(--verde-escuro); }
+    .mensagem.erro { display: block; background: #fbe6e1; color: #8a2b1b; }
+    button { font: inherit; cursor: pointer; }
+    footer { padding: 32px 0 48px; color: var(--suave); font-size: .9rem; border-top: 1px solid var(--borda); }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; padding-top: 24px; }
+      .cards { grid-template-columns: 1fr; }
+      form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a class="marca" href="#"><span>♻</span> Banco de Resíduos</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container hero">
+      <div>
+        <span class="selo">Petrolina/PE e Juazeiro/BA</span>
+        <h1>O resíduo da sua produção pode virar receita.</h1>
+        <p>O Banco de Resíduos conecta quem tem cascas, bagaços, sementes e frutas fora do padrão a quem pode dar a eles um novo uso: compostagem, ração, biomassa e pequenas indústrias.</p>
+        <div class="botoes">
+          <a class="btn btn-primario" href="#interesse" data-perfil="vender">Quero anunciar meu resíduo</a>
+          <a class="btn btn-secundario" href="#interesse" data-perfil="comprar">Quero comprar resíduo</a>
+        </div>
+      </div>
+      <div class="ilustracao" aria-label="Como funciona">
+        <ol>
+          <li><strong>Anuncie</strong> o resíduo com quantidade, preço e local de retirada.</li>
+          <li><strong>Receba propostas</strong> de compradores próximos e negocie pela plataforma.</li>
+          <li><strong>Feche o negócio</strong>, combine a retirada e avalie a outra parte.</li>
+        </ol>
+      </div>
+    </div>
+
+    <section class="faixa">
+      <div class="container">
+        <h2>Por que usar</h2>
+        <p class="sub">Feito para a fruticultura irrigada do Vale do São Francisco.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Busca por distância</h3>
+            <p>Compradores encontram resíduos perto deles, em lista ou no mapa, e o frete fica mais barato.</p>
+          </div>
+          <div class="card">
+            <h3>Negociação registrada</h3>
+            <p>Proposta, contraproposta e aceite ficam registrados. O estoque é reservado no aceite.</p>
+          </div>
+          <div class="card">
+            <h3>Confiança</h3>
+            <p>Telefone e e-mail só aparecem depois do negócio fechado, e as duas partes se avaliam.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2>Resíduos que circulam na plataforma</h2>
+        <p class="sub">Anunciar é gratuito. A plataforma cobra 5% apenas do vendedor, quando a venda é concluída. Doações não pagam nada.</p>
+        <ul class="lista-residuos">
+          <li>Casca e caroço de manga</li>
+          <li>Bagaço e engaço de uva</li>
+          <li>Casca de coco</li>
+          <li>Resíduo de acerola</li>
+          <li>Frutas fora do padrão</li>
+          <li>Outros subprodutos agrícolas</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="faixa" id="interesse">
+      <div class="container">
+        <h2>Quero participar</h2>
+        <p class="sub">Deixe seu contato e avisamos quando a plataforma abrir na sua região.</p>
+        <form id="form-lead" novalidate>
+          <label>Nome
+            <input name="nome" required autocomplete="name">
+          </label>
+          <label>WhatsApp ou e-mail
+            <input name="contato" required>
+          </label>
+          <label>Você quer
+            <select name="perfil" id="perfil" required>
+              <option value="">Escolha</option>
+              <option value="vender">Vender ou doar resíduo</option>
+              <option value="comprar">Comprar resíduo</option>
+              <option value="ambos">Os dois</option>
+            </select>
+          </label>
+          <label>Município
+            <input name="municipio" placeholder="Ex.: Petrolina">
+          </label>
+          <label class="inteiro">Que resíduo você tem ou procura?
+            <input name="residuo" placeholder="Ex.: 2 t por semana de casca de manga">
+          </label>
+          <label class="inteiro aceite"><input type="checkbox" name="aceite" required> Concordo em ser contatado pela equipe do Banco de Resíduos. Os dados são usados só para isso e podem ser apagados a pedido (LGPD).</label>
+          <div class="inteiro"><button class="btn btn-primario" type="submit">Enviar</button></div>
+          <div class="mensagem" id="mensagem" role="status"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Banco de Resíduos — projeto da disciplina de Inovação Tecnológica, FACAPE. Petrolina/PE.
+    </div>
+  </footer>
+
+  <script>
+    // Configuração: endereço do Google Forms que recebe os leads.
+    // Passo a passo em landing/README.md. Sem isso o formulário não envia.
+    const FORMULARIO = {
+      acao: "",            // ex.: https://docs.google.com/forms/d/e/XXXX/formResponse
+      campos: {            // ids "entry.NNN" de cada pergunta do Google Forms
+        nome: "",
+        contato: "",
+        perfil: "",
+        municipio: "",
+        residuo: ""
+      }
+    };
+
+    document.querySelectorAll("[data-perfil]").forEach(function (a) {
+      a.addEventListener("click", function () {
+        document.getElementById("perfil").value = a.dataset.perfil;
+      });
+    });
+
+    const form = document.getElementById("form-lead");
+    const msg = document.getElementById("mensagem");
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      msg.className = "mensagem";
+      if (!form.checkValidity()) {
+        msg.textContent = "Preencha nome, contato, o que você quer e marque o aceite.";
+        msg.className = "mensagem erro";
+        return;
+      }
+      if (!FORMULARIO.acao) {
+        msg.textContent = "Formulário ainda não configurado. Fale com a equipe.";
+        msg.className = "mensagem erro";
+        return;
+      }
+      const dados = new FormData(form);
+      const envio = new URLSearchParams();
+      Object.keys(FORMULARIO.campos).forEach(function (k) {
+        if (FORMULARIO.campos[k]) envio.append(FORMULARIO.campos[k], dados.get(k) || "");
+      });
+      try {
+        await fetch(FORMULARIO.acao, { method: "POST", mode: "no-cors", body: envio });
+        form.reset();
+        msg.textContent = "Recebido! Vamos entrar em contato.";
+        msg.className = "mensagem ok";
+      } catch (err) {
+        msg.textContent = "Não foi possível enviar agora. Tente de novo em instantes.";
+        msg.className = "mensagem erro";
+      }
+    });
+  </script>
+</body>
+</html>
