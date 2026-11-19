@@ -25,11 +25,14 @@ Notas de 1 a 5, multiplicadas pelo peso. A coluna "Nota estimada" é uma autoava
 
 | Dimensão | Peso | Máx. | Evidência que temos | Nota estimada | O que falta para subir |
 | --- | --- | --- | --- | --- | --- |
-| Problema e oportunidade de mercado | 3 | 15 | Problema regional real (resíduo da fruticultura) | _preencher_ | Números de volume de resíduo e entrevistas com produtores |
-| Produto e tecnologia | 3 | 15 | MVP completo, com testes automatizados | _preencher_ | MVP publicado com link e usuários reais |
-| Equipe empreendedora | 2 | 10 | 7 integrantes, divisão por módulo | _preencher_ | Alguém com vivência no agro ou parceria com especialista |
-| Capital | 1 | 5 | DRE simplificado | _preencher_ | Mostrar como a equipe se sustenta sem pró-labore |
-| Gestão | 1 | 5 | Quadro de tarefas, repositório com histórico | _preencher_ | Quadro de sprints atualizado |
+| Problema e oportunidade de mercado | 3 | 15 | Problema regional real, com dados de produção e de resíduo da manga ([dossiê, seção 2](dossie-executivo.md)) | 3 (9 pts) | Entrevistas com produtores e compradores confirmando custo de descarte e preço por kg |
+| Produto e tecnologia | 3 | 15 | MVP completo, com testes automatizados | 4 (12 pts) | MVP publicado com link e usuários reais |
+| Equipe empreendedora | 2 | 10 | 7 integrantes, divisão por módulo | 3 (6 pts) | Alguém com vivência no agro ou parceria com especialista |
+| Capital | 1 | 5 | DRE simplificado com fontes das premissas | 2 (2 pts) | Mostrar como a equipe se sustenta sem pró-labore; nenhum recurso captado |
+| Gestão | 1 | 5 | Repositório com histórico; backlog em [backlog.md](backlog.md) | 3 (3 pts) | Quadro de sprints atualizado e usado pela equipe |
+| **Total** | | **50** | | **32 de 50 (64%)** | |
+
+> Notas propostas como autoavaliação conservadora; a equipe deve revisar e ajustar antes da entrega.
 
 ## Análise de viabilidade da submissão
 
