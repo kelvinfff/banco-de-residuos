@@ -226,6 +226,8 @@ Do pitch: planos para empresas (mais anúncios, filtros avançados, relatórios)
 | [docs/edital-fomento.md](docs/edital-fomento.md) | Edital de fomento simulado (Sertão Inovador) |
 | [docs/ecossistema.md](docs/ecossistema.md) | Mapa de parceiros e integrações |
 | [docs/dossie-executivo.md](docs/dossie-executivo.md) | Rascunho do Dossiê Executivo |
+| [docs/backlog.md](docs/backlog.md) | Backlog e sprints (base do quadro do projeto) |
+| [landing/](landing/) | Landing page de captação de leads e como publicá-la |
 
 ## Equipe
 

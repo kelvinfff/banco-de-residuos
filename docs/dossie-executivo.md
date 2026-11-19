@@ -26,7 +26,7 @@ Ver "O que o MVP faz" e "Arquitetura" no [README](../README.md).
 ## 4. Validação
 - Plano de métricas ✅ → [metricas.md](metricas.md) (falta preencher os valores reais)
 - Testes de usabilidade → [testes-usabilidade.md](testes-usabilidade.md) (falta registrar os testes)
-- Landing page e leads: _a fazer_
+- Landing page → [landing/](../landing/) (página pronta; falta ligar ao Google Forms, publicar e contar visitas e leads)
 
 ## 5. Modelo de negócio e DRE ✅
 Comissão de 5% sobre cada transação, descontada do vendedor, e plano para empresas a partir do mês 7. Projeção de 12 meses e premissas em [dre.md](dre.md).
