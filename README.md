@@ -213,6 +213,20 @@ Todas as rotas ficam sob `/api`. Erros voltam como `{ "erro": "mensagem", "campo
 
 Do pitch: planos para empresas (mais anúncios, filtros avançados, relatórios), anúncios em destaque e, numa etapa futura, a entrada de transportadores para fechar a logística.
 
+## Documentação do projeto
+
+| Documento | Conteúdo |
+| --- | --- |
+| [docs/metricas.md](docs/metricas.md) | Plano de métricas acionáveis |
+| [docs/testes-usabilidade.md](docs/testes-usabilidade.md) | Roteiro e registro dos testes de usabilidade |
+| [docs/roadmap.md](docs/roadmap.md) | Roadmap de escalabilidade e desafios regulatórios (LGPD) |
+| [docs/storyboard-demo-day.md](docs/storyboard-demo-day.md) | Roteiro da apresentação e da demo ao vivo |
+| [docs/dre.md](docs/dre.md) | DRE simplificado, precificação e ponto de equilíbrio |
+| [docs/anterioridade.md](docs/anterioridade.md) | Busca de anterioridade e diferencial |
+| [docs/edital-fomento.md](docs/edital-fomento.md) | Edital de fomento simulado (Sertão Inovador) |
+| [docs/ecossistema.md](docs/ecossistema.md) | Mapa de parceiros e integrações |
+| [docs/dossie-executivo.md](docs/dossie-executivo.md) | Rascunho do Dossiê Executivo |
+
 ## Equipe
 
 | Módulo | Responsáveis |
